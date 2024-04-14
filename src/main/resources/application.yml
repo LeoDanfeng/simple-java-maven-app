@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: my-app
+  profiles:
+    active: dev
+
+jwt:
+  prefix: "bearer "

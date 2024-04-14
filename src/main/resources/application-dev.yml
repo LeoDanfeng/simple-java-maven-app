@@ -1,0 +1,9 @@
+server:
+  port: 9000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.31.163.102:3308/test?serverTimezone=Asia/Shanghai
+    username: developer
+    password: DevPasswd123.
