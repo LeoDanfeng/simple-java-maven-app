@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Configuration
 @Slf4j
@@ -48,17 +47,14 @@ public class JwtComponentConfig {
 
     @Bean
     public JwtLoginService jwtLoginService() {
-        return new JwtLoginService(jwsSigner(),jwsVerifier());
+        return new JwtLoginService(jwsSigner(), jwsVerifier());
     }
 
 
     private String readKeyAsString(String signatureFile) {
-        String path =
-                JwtComponentConfig.class.getClassLoader().getResource(signatureFile).getPath();
-        String absolutePath = new File(path).getAbsolutePath();
         String pemString = null;
-        try {
-            pemString = new String(Files.readAllBytes(Path.of(absolutePath)));
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(signatureFile)) {
+            pemString = new String(is.readAllBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
