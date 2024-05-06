@@ -1,4 +1,4 @@
-ARG java_version=11-jdk-alpine
+ARG java_version=11
 
 FROM openjdk:$java_version AS openjdk11
 
