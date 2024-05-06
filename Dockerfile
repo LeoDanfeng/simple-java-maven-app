@@ -17,5 +17,5 @@ EXPOSE 9000
 
 VOLUME /my-app/
 
-CMD java -jar target/my-app-1.0.0-SNAPSHOT.jar
+CMD java -jar target/my-app-1.0.0-SNAPSHOT.jar -Dspring.profiles.active=prod -Dlog.path=/var/log/my-app/ -Dmysql_url=jdbc:mysql://192.169.0.104:3308/test?serverTimezone=Asia/Shanghai
 
