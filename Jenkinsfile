@@ -8,7 +8,7 @@ pipeline {
         }
         stage('docker-image') {
             steps {
-                sh 'docker build -t my-app:v1'
+                sh 'docker build -t my-app:v1 .'
             }
         }
         stage('docker-run') {
