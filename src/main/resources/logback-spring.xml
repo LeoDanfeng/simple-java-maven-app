@@ -220,7 +220,7 @@
 <!--        <logger name="com.my.company.app" level="debug"/> &lt;!&ndash; 测试环境, 指定某包日志为info级 &ndash;&gt;-->
     </springProfile>
 
-    <springProfile name="pro">
+    <springProfile name="prod">
         <root level="info">
             <!-- 生产环境最好不配置console写文件 -->
             <appender-ref ref="DEBUG_FILE" />

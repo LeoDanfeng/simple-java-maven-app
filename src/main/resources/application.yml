@@ -2,7 +2,7 @@ spring:
   application:
     name: my-app
   profiles:
-    active: ${activeProfiel:prod}
+    active: ${hello:dev}
   jpa:
     properties:
       hibernate:
