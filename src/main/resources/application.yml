@@ -3,6 +3,28 @@ spring:
     name: my-app
   profiles:
     active: dev
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
 
 jwt:
-  prefix: "bearer "
+  prefix: "Bearer "
+  enalbed: false
+
+server:
+  servlet:
+    encoding:
+      force: true
+
+logging:
+  level:
+    root: info
+    com.my.company.app: debug
+
+data:
+  size: 100
+
+log:
+  path: ${logPath:./log/}

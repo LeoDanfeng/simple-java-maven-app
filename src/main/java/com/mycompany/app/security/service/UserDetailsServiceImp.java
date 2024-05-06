@@ -1,6 +1,6 @@
-package com.mycompany.app.service;
+package com.mycompany.app.security.service;
 
-import com.mycompany.app.dao.UserRepository;
+import com.mycompany.app.dao.mysql.MysqlUserRepository;
 import com.mycompany.app.entity.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,18 +21,17 @@ import java.util.List;
 public class UserDetailsServiceImp implements UserDetailsService {
 
     @Resource
-    UserRepository userRepository;
+    MysqlUserRepository mysqlUserRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysUser sysUser = userRepository.getByAccountName(username);
+        SysUser sysUser = mysqlUserRepository.getByAccountName(username);
         UserDetails user = null;
         if (sysUser != null) {
             List<GrantedAuthority> authorities = new ArrayList<>();
             if (sysUser.getRoles() != null) {
                 Arrays.stream(sysUser.getRoles().split(";")).forEach(t -> authorities.add(new SimpleGrantedAuthority(t)));
             }
-            log.debug("username:{},authorities:{}",username,authorities);
             user = User.withUsername(sysUser.getAccountName()).password(sysUser.getPassword()).authorities(authorities).build();
         }
         return user;

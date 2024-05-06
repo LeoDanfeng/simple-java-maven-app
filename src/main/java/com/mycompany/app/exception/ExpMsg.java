@@ -2,7 +2,9 @@ package com.mycompany.app.exception;
 
 public enum ExpMsg {
 
-    TOKEN_FAILURE("TOKEN 解析失败");
+    TOKEN_PARSE_FAILURE("Token解析失败"),
+    TOKEN_GENERATION_FAILURE("Token生成失败"),
+    JWK_PARSE_FAILURE("密钥文件解析失败");
 
     private String expMsg;
 

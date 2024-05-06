@@ -6,9 +6,14 @@ pipeline {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
-        stage('Run') {
+        stage('docker-image') {
             steps {
-                sh 'java -jar target/my-app-1.0.0-SNAPSHOT.jar'
+                sh 'docker build -t my-app:v1'
+            }
+        }
+        stage('docker-run') {
+            steps {
+                sh 'docker run -it -p 9000:9000 --name my-app -d my-app:v1'
             }
         }
     }

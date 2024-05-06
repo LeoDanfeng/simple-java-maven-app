@@ -7,3 +7,7 @@ spring:
     url: jdbc:mysql://172.31.163.102:3308/test?serverTimezone=Asia/Shanghai
     username: developer
     password: DevPasswd123.
+  redis:
+    host: 172.31.163.102
+    port: 6379
+    database: 0

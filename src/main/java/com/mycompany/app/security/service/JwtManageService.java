@@ -1,22 +1,24 @@
-package com.mycompany.app.service;
+package com.mycompany.app.security.service;
 
+import com.mycompany.app.exception.AppException;
 import com.mycompany.app.exception.ExpMsg;
 import com.mycompany.app.exception.ThirdPartyException;
 import com.mycompany.app.security.config.JwtComponentConfig;
 import com.nimbusds.jose.*;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
-public class JwtLoginService {
+public class JwtManageService {
 
     private JWSSigner jwsSigner;
 
@@ -25,7 +27,7 @@ public class JwtLoginService {
     @Value("${jwt.prefix}")
     private String jwtPrefix;
 
-    public JwtLoginService(JWSSigner jwsSigner, JWSVerifier jwsVerifier) {
+    public JwtManageService(JWSSigner jwsSigner, JWSVerifier jwsVerifier) {
         this.jwsSigner = jwsSigner;
         this.jwsVerifier = jwsVerifier;
     }
@@ -35,12 +37,13 @@ public class JwtLoginService {
         try {
             signedJWT.sign(jwsSigner);
         } catch (JOSEException e) {
-            e.printStackTrace();
+            throw new AppException(ExpMsg.TOKEN_GENERATION_FAILURE.getExpMsg(), e);
         }
         return jwtPrefix + signedJWT.serialize();
     }
 
     private JWTClaimsSet jwtClaimsSet(Authentication auth) {
+        List<String> authoritiesList = auth.getAuthorities().stream().map(t -> t.getAuthority()).collect(Collectors.toList());
         final long millis = System.currentTimeMillis();
         Date issueTime = new Date(millis);
         // 有效期半小时
@@ -53,7 +56,7 @@ public class JwtLoginService {
                 .notBeforeTime(issueTime)
                 .expirationTime(expireTime)
                 .jwtID(UUID.randomUUID().toString())
-                .claim(JwtComponentConfig.AUTHORITIES_CLAIM, auth.getAuthorities())
+                .claim(JwtComponentConfig.AUTHORITIES_CLAIM, authoritiesList)
                 .build();
     }
 
@@ -69,14 +72,19 @@ public class JwtLoginService {
     public Authentication getAuthentication(String token) {
         UsernamePasswordAuthenticationToken authentication = null;
         JWTClaimsSet jwtClaimsSet = getJWTClaimsSet(token);
-        if (jwtClaimsSet != null && jwtClaimsSet.getExpirationTime().before(new Date(System.currentTimeMillis() + 10 * 60 * 1000))) {
+        if (jwtClaimsSet != null && jwtClaimsSet.getExpirationTime().after(new Date())) {
+            List<GrantedAuthority> authoritiesList = ((List<String>) jwtClaimsSet.getClaim(JwtComponentConfig.AUTHORITIES_CLAIM))
+                    .stream()
+                    .map(t -> new SimpleGrantedAuthority(t))
+                    .collect(Collectors.toList());
             authentication = new UsernamePasswordAuthenticationToken(jwtClaimsSet.getSubject(),
                     null,
-                    (Collection<? extends GrantedAuthority>) jwtClaimsSet.getClaim(JwtComponentConfig.AUTHORITIES_CLAIM)
+                    authoritiesList
             );
         }
         return authentication;
     }
+
 
     private JWTClaimsSet getJWTClaimsSet(String token) {
         JWTClaimsSet jwtClaimsSet = null;
@@ -86,8 +94,7 @@ public class JwtLoginService {
                 jwtClaimsSet = parse.getJWTClaimsSet();
             }
         } catch (Exception e) {
-            log.error("token({})解析失败;错误消息：{}", token,e.getMessage());
-            throw new ThirdPartyException(ExpMsg.TOKEN_FAILURE.getExpMsg(),e);
+            throw new ThirdPartyException(ExpMsg.TOKEN_PARSE_FAILURE.getExpMsg(), e);
         }
         return jwtClaimsSet;
     }

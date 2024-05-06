@@ -1,17 +1,17 @@
 package com.mycompany.app.entity;
 
+import com.mycompany.app.common.BaseEntity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "sys_user")
-public class SysUser {
+public class SysUser extends BaseEntity implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+    private static final Long serialVersionUID = 1L;
 
     private String accountName;
 

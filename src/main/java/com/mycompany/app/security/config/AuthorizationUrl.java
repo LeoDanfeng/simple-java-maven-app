@@ -2,16 +2,21 @@ package com.mycompany.app.security.config;
 
 public enum AuthorizationUrl {
 
-    ANONYMOUS(null, new String[] {
-            "/permitAll"
+    ANONYMOUS(null, new String[]{
+            "/permitAll","/login","/logout","/cache/**"
     }),
 
-    NORMAL("NORMAL", new String[] {}),
+    NORMAL("NORMAL", new String[]{
+            "/withRole/normal"
+    }),
 
-    ADMIN("ADMIN", new String[] {});
+    ADMIN("ADMIN", new String[]{
+            "/withRole/admin",
+            "/admin/**"
+    });
 
-    private String role;
-    private String[] authorities;
+    private final String role;
+    private final String[] authorities;
 
     AuthorizationUrl(String role, String[] authorities) {
         this.role = role;

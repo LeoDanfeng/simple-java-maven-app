@@ -1,6 +1,8 @@
 package com.mycompany.app.security.config;
 
-import com.mycompany.app.service.JwtLoginService;
+import com.mycompany.app.exception.AppException;
+import com.mycompany.app.exception.ExpMsg;
+import com.mycompany.app.security.service.JwtManageService;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
@@ -13,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.*;
-import java.nio.file.Files;
 
 @Configuration
 @Slf4j
@@ -29,9 +30,8 @@ public class JwtComponentConfig {
             RSAKey privateKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("rsa/rsa_private_key.pem"));
             return new RSASSASigner(privateKey);
         } catch (JOSEException e) {
-            e.printStackTrace();
+            throw new AppException(ExpMsg.JWK_PARSE_FAILURE.getExpMsg(),e);
         }
-        return null;
     }
 
     @Bean
@@ -40,14 +40,13 @@ public class JwtComponentConfig {
             RSAKey publicKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("rsa/rsa_public_key.pem"));
             return new RSASSAVerifier(publicKey);
         } catch (JOSEException e) {
-            e.printStackTrace();
+            throw new AppException(ExpMsg.JWK_PARSE_FAILURE.getExpMsg(),e);
         }
-        return null;
     }
 
     @Bean
-    public JwtLoginService jwtLoginService() {
-        return new JwtLoginService(jwsSigner(), jwsVerifier());
+    public JwtManageService jwtLoginService() {
+        return new JwtManageService(jwsSigner(), jwsVerifier());
     }
 
 
