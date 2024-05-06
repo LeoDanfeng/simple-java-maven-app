@@ -4,8 +4,8 @@ FROM openjdk:$java_version AS openjdk11
 
 USER root
 
-ENV activeProfile="prod"
-ENV logPath="/var/log/my-app/"
+ENV activeProfile=prod
+ENV logPath=/var/log/my-app/
 
 LABEL maintainer="13076894376@163.com"
 
