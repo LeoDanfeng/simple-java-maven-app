@@ -1,8 +1,8 @@
 spring:
   application:
     name: my-app
-  profiles:
-    active: ${hello:dev}
+#  profiles:
+#    active: ${hello:dev}
   jpa:
     properties:
       hibernate:
