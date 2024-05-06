@@ -4,7 +4,7 @@ FROM openjdk:$java_version AS openjdk11
 
 USER root
 
-ENV active=prod
+ENV activeProfile="prod"
 ENV logPath="/var/log/my-app/"
 
 LABEL maintainer="13076894376@163.com"
@@ -17,5 +17,5 @@ EXPOSE 9000
 
 VOLUME /my-app/
 
-CMD java -jar target/my-app-1.0.0-SNAPSHOT.jar -Dspring.profiles.active=$active
+CMD java -jar target/my-app-1.0.0-SNAPSHOT.jar -Dspring.profiles.active=$activeProfile
 
