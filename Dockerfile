@@ -18,5 +18,5 @@ EXPOSE 9000
 
 VOLUME /my-app/
 
-CMD java -Dspring.profiles.active=prod -jar target/my-app-1.0.0-SNAPSHOT.jar
+CMD java -jar target/my-app-1.0.0-SNAPSHOT.jar
 
