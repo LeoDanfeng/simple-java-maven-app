@@ -6,6 +6,7 @@ USER root
 
 ENV activeProfile=prod
 ENV logPath=/var/log/my-app/
+ENV mysql_url=mysql
 
 LABEL maintainer="13076894376@163.com"
 
