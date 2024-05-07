@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${mysql_url:jdbc:mysql://mysql:3308/test?serverTimezone=Asia/Shanghai}
+    url: ${mysql_url:jdbc:mysql://172.31.163.102:3308/test?serverTimezone=Asia/Shanghai}
     username: ${mysql_user:developer}
     password: ${mysql_passwd:DevPasswd123.}
   redis:
