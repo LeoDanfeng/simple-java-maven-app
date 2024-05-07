@@ -6,7 +6,7 @@ USER root
 
 ENV activeProfile=prod
 ENV logPath=/var/log/my-app/
-ENV mysql_url=jdbc:mysql://mysql/test?serverTimezone=Asia/Shanghai
+ENV mysql_url="jdbc:mysql://mysql/test?serverTimezone=Asia/Shanghai"
 
 LABEL maintainer="13076894376@163.com"
 
