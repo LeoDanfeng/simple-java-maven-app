@@ -8,6 +8,8 @@ services:
     volumes:
     - "/docker/redis/conf/redis.conf:/etc/redis/redis.conf"
     - "/docker/redis/data:/data"
+    networks:
+      my-app-net
     restart: always
 #    command: redis-server
     container_name: redis
@@ -24,6 +26,8 @@ services:
     - "/docker/mysql/data:/var/lib/mysql"
     - "/docker/mysql/sql/init.sql:/docker-entrypoint-initdb.d/init.sql"
     - "/etc/localtime:/etc/localtime"
+    networks:
+      my-app-net
     restart: always
 #    command: --init-file /docker-entrypoint-initdb.d/init.sql
     container_name: mysql
@@ -35,7 +39,11 @@ services:
       dockerfile: Dockerfile
     ports:
     - 9000:9000
+    networks:
+      my-app-net
     restart: always
     container_name: my-app
     privileged: true
+networks:
+  my-app-net
 

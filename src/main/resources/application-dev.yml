@@ -4,10 +4,10 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${mysql_url:jdbc:mysql://172.31.163.102:3308/test?serverTimezone=Asia/Shanghai}
+    url: jdbc:mysql://${mysql_service:172.31.163.102}:${myslq_port:3308}/test?serverTimezone=Asia/Shanghai}
     username: ${mysql_user:developer}
     password: ${mysql_passwd:DevPasswd123.}
   redis:
-    host: ${redis_host:172.31.163.102}
+    host: ${redis_service:172.31.163.102}
     port: ${redis_port:6379}
     database: ${redis_db:0}

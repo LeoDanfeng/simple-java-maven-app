@@ -9,7 +9,9 @@ ENV log_path=/var/log/my-app/
 ENV mysql_url="jdbc:mysql://172.31.163.102:3308/test?serverTimezone=Asia/Shanghai"
 ENV mysql_user=developer
 ENV mysql_passwd=DevPasswd123.
-ENV redis_host=172.31.163.102
+ENV mysql_service=mysql
+ENV redis_service=redis
+ENV mysql_port=3306
 ENV redis_port=6379
 ENV redis_db=0
 
