@@ -35,7 +35,6 @@ services:
       dockerfile: Dockerfile
     ports:
     - 9000:9000
-    volumes:
     restart: always
     container_name: my-app
     privileged: true
