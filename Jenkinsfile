@@ -13,7 +13,7 @@ pipeline {
         }
         stage('docker-run') {
             steps {
-                sh 'docker run -it -p 9000:9000 -d my-app:v1'
+                sh 'docker compose up'
             }
         }
     }

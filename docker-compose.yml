@@ -25,7 +25,7 @@ services:
     - "/docker/mysql/sql/init.sql:/docker-entrypoint-initdb.d/init.sql"
     - "/etc/localtime:/etc/localtime"
     restart: always
-    command: --init-file /docker-entrypoint-initdb.d/init.sql
+#    command: --init-file /docker-entrypoint-initdb.d/init.sql
     container_name: mysql
     privileged: true
   my-app:
