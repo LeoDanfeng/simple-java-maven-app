@@ -1,6 +1,8 @@
 package com.mycompany.app.exception;
 
 public class ThirdPartyException extends RuntimeException{
+    private static final long serialVersionUID = 4493994161652408297L;
+
     public ThirdPartyException() {
         super();
     }

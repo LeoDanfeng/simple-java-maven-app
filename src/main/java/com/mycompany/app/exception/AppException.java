@@ -1,6 +1,8 @@
 package com.mycompany.app.exception;
 
 public class AppException extends RuntimeException{
+    private static final long serialVersionUID = 7266945809574712750L;
+
     public AppException() {
         super();
     }

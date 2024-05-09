@@ -55,7 +55,7 @@ public class JwtComponentConfig {
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(signatureFile)) {
             pemString = new String(is.readAllBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new AppException("读取密钥文件IO异常", e);
         }
         return pemString;
     }

@@ -103,6 +103,4 @@ public class StarterApplication {
         log.info("Article: {}", article);
         return article;
     }
-
-
 }
