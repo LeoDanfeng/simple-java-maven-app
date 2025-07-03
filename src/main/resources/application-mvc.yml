@@ -1,0 +1,14 @@
+server:
+  servlet:
+    encoding:
+      force: true
+    context-path: "/"
+  port: 8080
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    format:
+      date: "yyyy-MM-dd"
+      date-time: "yyyy-MM-dd HH:mm:ss"
+      time: HH:mm:ss

@@ -14,6 +14,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+/**
+* @Author: 罗丹枫
+* @Description: 注入权限管理组件
+* @CreatedAt: 2024/7/11 22:18
+*/
+
+
 @Configuration
 @Slf4j
 public class AuthManagerConfig {
@@ -32,6 +39,11 @@ public class AuthManagerConfig {
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authenticationProvider);
+    }
+
+    public static void main(String[] args) {
+        String encoded = new AuthManagerConfig().passwordEncoder().encode("admin@2025#");
+        System.out.println(encoded);
     }
 
 }

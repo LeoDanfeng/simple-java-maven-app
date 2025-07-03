@@ -13,3 +13,10 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 
 .idea
+.github
+*.iml
+logs
+xxl-job-logs
+log
+
+

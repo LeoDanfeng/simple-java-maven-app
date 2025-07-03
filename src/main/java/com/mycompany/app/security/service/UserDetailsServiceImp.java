@@ -1,7 +1,7 @@
 package com.mycompany.app.security.service;
 
 import com.mycompany.app.dao.mysql.MysqlUserRepository;
-import com.mycompany.app.entity.SysUser;
+import com.mycompany.app.entity.mysql.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +16,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+* @Author: 罗丹枫
+* @Description: 登录认证根据用户名从数据库获取用户信息
+* @CreatedAt: 2024/7/11 22:23
+*/
+
 @Slf4j
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
@@ -25,14 +31,14 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysUser sysUser = mysqlUserRepository.getByAccountName(username);
+        SysUser sysUser = mysqlUserRepository.getByAccount(username);
         UserDetails user = null;
         if (sysUser != null) {
             List<GrantedAuthority> authorities = new ArrayList<>();
             if (sysUser.getRoles() != null) {
                 Arrays.stream(sysUser.getRoles().split(";")).forEach(t -> authorities.add(new SimpleGrantedAuthority(t)));
             }
-            user = User.withUsername(sysUser.getAccountName()).password(sysUser.getPassword()).authorities(authorities).build();
+            user = User.withUsername(sysUser.getAccount()).password(sysUser.getPassword()).authorities(authorities).build();
         }
         return user;
     }

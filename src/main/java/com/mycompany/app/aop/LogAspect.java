@@ -1,21 +1,18 @@
 package com.mycompany.app.aop;
 
-import com.mycompany.app.exception.AppException;
+import com.mycompany.app.dao.redis.RequestStatisticRepository;
+import com.mycompany.app.entity.redis.RequestStatistic;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.aspectj.lang.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Aspect
@@ -23,82 +20,57 @@ import java.lang.reflect.Method;
 public class LogAspect {
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private RequestStatisticRepository requestStatisticRepository;
 
-    @Pointcut("@annotation(com.mycompany.app.aop.LogEnhance)")
-    public void logEnhance() {
-
-    }
-
-    @Pointcut("execution(* *..*StarterApplication.get*(..))")
-    public void queryByCache() {
+    @Pointcut("execution(* *..*Controller.*(..))")
+    public void beforeRequest() {
 
     }
 
-    @Pointcut("execution(* *..*StarterApplication.update*(..))")
-    public void updateCache() {
+    /**
+     * @Author: 罗丹枫
+     * @Description: 统计接口的调用信息
+     * @CreatedAt: 2024/7/11 21:49
+     * @Params: [joinPoint]  AOP切点
+     * @Return: void
+     */
 
-    }
-
-    @Around("queryByCache()")
-    public Object enhanceQuery(ProceedingJoinPoint joinPoint) throws Throwable {
-        Signature signature = joinPoint.getSignature();
-        Object[] parameterValues = joinPoint.getArgs();
-        MethodSignature methodSignature = (MethodSignature) signature;
-        Method method = methodSignature.getMethod();
-        Class<?> returnType = method.getReturnType();
-        if (returnType == null) {
-            joinPoint.proceed();
-            return null;
+    @Before("beforeRequest()")
+    public void requestStatistics(JoinPoint joinPoint) {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+//        if ("anonymousUser".equals(currentUser)) {
+//            return;
+//        }
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        RequestStatistic rs = new RequestStatistic();
+        String ipAddress = request.getHeader("x-forwarded-for");
+        if (ipAddress == null || ipAddress.isEmpty() || ipAddress.equalsIgnoreCase("unknown")) {
+            ipAddress = request.getHeader("Proxy-Client-IP");
         }
-        StringBuilder keyBuilder = new StringBuilder();
-        keyBuilder.append(returnType.getSimpleName());
-        keyBuilder.append("::");
-        String[] parameterNames = methodSignature.getParameterNames();
-        for (int i = 0; i < parameterNames.length; i++) {
-            if (parameterNames[i].equals("id")) {
-                keyBuilder.append(parameterValues[i]);
-                break;
-            }
+        if (ipAddress == null || ipAddress.isEmpty() || ipAddress.equalsIgnoreCase("unknown")) {
+            ipAddress = request.getHeader("WL-Proxy-Client-IP");
         }
-        String key = keyBuilder.toString();
-        Object result = redisTemplate.opsForValue().get(key);
-        if (result != null) {
-            return result;
+        if (ipAddress == null || ipAddress.isEmpty() || ipAddress.equalsIgnoreCase("unknown")) {
+            ipAddress = request.getHeader("HTTP-CLIENT-IP");
         }
-        result = joinPoint.proceed();
-        redisTemplate.opsForValue().set(key, result);
-        return result;
+        if (ipAddress == null || ipAddress.isEmpty() || ipAddress.equalsIgnoreCase("unknown")) {
+            ipAddress = request.getHeader("HTTP-X-FORWARDED-FOR");
+        }
+        if (ipAddress == null || ipAddress.isEmpty() || ipAddress.equalsIgnoreCase("unknown")) {
+            ipAddress = request.getRemoteAddr();
+        }
+        rs.setAccessIp(ipAddress);
+        rs.setRemoteAddr(request.getRemoteAddr());
+        rs.setAccessUri(request.getRequestURI());
+        rs.setAccessUser(currentUser);
+        rs.setAccessTime(LocalDateTime.now());
+        Object[] args = joinPoint.getArgs();
+        StringBuilder builder = new StringBuilder();
+        for (Object o : args) {
+            builder.append(o.toString());
+            builder.append(";");
+        }
+        rs.setArgs(builder.toString());
+        requestStatisticRepository.save(rs);
     }
-
-    @AfterReturning(value = "updateCache()", returning = "result")
-    public Object enhanceUpdate(JoinPoint joinPoint, final Object result) {
-        try {
-            Object[] parameterValues = joinPoint.getArgs();
-            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-            Method method = signature.getMethod();
-            Class<?> returnType = method.getReturnType();
-            if (returnType == null) {
-                return null;
-            }
-            StringBuilder keyBuilder = new StringBuilder();
-            String[] parameterNames = signature.getParameterNames();
-            keyBuilder.append(returnType.getSimpleName());
-            keyBuilder.append("::");
-            Method getId = returnType.getMethod("getId");
-            Long id = (Long) getId.invoke(result);
-            keyBuilder.append(id);
-            String key = keyBuilder.toString();
-            redisTemplate.opsForValue().set(key, result);
-        } catch (NoSuchMethodException e) {
-            throw new AppException("目标(" + result + ")必须包含getId方法", e);
-        } catch (InvocationTargetException e) {
-            throw new AppException("目标(" + result + ")调用getId方法出现异常", e);
-        } catch (IllegalAccessException e) {
-            throw new AppException("目标(" + result + ")getId方法无法访问", e);
-        }
-        return result;
-    }
-
-
 }

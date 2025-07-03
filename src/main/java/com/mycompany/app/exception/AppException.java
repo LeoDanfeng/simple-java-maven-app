@@ -19,7 +19,7 @@ public class AppException extends RuntimeException{
         super(cause);
     }
 
-    protected AppException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public AppException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

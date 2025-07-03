@@ -2,9 +2,12 @@ package com.mycompany.app.security.filter;
 
 import com.mycompany.app.security.config.JwtComponentConfig;
 import com.mycompany.app.security.service.JwtManageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,7 +19,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component
+/**
+ * @Author: 罗丹枫
+ * @Description: token登录认证过滤器
+ * @CreatedAt: 2024/7/11 22:22
+ */
+
+//@Component
+@Slf4j
 public class JwtPreAuthenticationFilter extends OncePerRequestFilter {
 
     @Resource
@@ -25,22 +35,21 @@ public class JwtPreAuthenticationFilter extends OncePerRequestFilter {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String token = request.getHeader(JwtComponentConfig.AUTHORIZATION_HEAD);
-            if (StringUtils.hasText(token) && token.startsWith(JwtComponentConfig.TOKEN_PREFIX)) {
-                token = token.substring(7);
-                Authentication authentication = jwtManageService.getAuthentication(token);
-                if (authentication != null) {
-                    String savedToken = stringRedisTemplate.opsForValue().get(authentication.getName());
-                    if (savedToken != null) {
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
+        String originalToken = request.getHeader(JwtComponentConfig.AUTHORIZATION_HEAD);
+        if (StringUtils.hasText(originalToken) && originalToken.startsWith(JwtComponentConfig.TOKEN_PREFIX)) {
+            String token = originalToken.substring(7);
+            // 验证token并保存请求用户信息
+            Authentication authentication = jwtManageService.getAuthentication(token);
+            if (authentication != null) {
+                String savedToken = stringRedisTemplate.opsForValue().get(authentication.getName());
+                if (originalToken.equals(savedToken)) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } finally {
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 }

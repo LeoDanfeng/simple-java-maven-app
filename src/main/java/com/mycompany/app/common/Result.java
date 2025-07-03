@@ -11,31 +11,25 @@ public class Result<T> {
     private Result() {
     }
 
-    public Result(String errorCode, String errorMsg) {
-        this(errorCode, errorMsg, null);
-    }
-
-    public Result(String code, String msg, T data) {
-        this.code = code;
-        this.msg = msg;
-        this.data = data;
-    }
-
 
     public static class ResultBuild<T> {
-        private Result<T> result = new Result();
+        private final Result<T> result;
 
-        public ResultBuild errorCode(String code) {
+        public ResultBuild() {
+            result = new Result<>();
+        }
+
+        public ResultBuild<T> code(String code) {
             result.setCode(code);
             return this;
         }
 
-        public ResultBuild errorMsg(String msg) {
+        public ResultBuild<T> msg(String msg) {
             result.setMsg(msg);
             return this;
         }
 
-        public ResultBuild data(T data) {
+        public ResultBuild<T> data(T data) {
             result.setData(data);
             return this;
         }
@@ -43,5 +37,17 @@ public class Result<T> {
         public Result<T> build() {
             return this.result;
         }
+    }
+
+    public static <T> Result<T> ok() {
+        return Result.<T>builder().code("200").build();
+    }
+
+    public static <T> Result<T> error(String msg) {
+        return Result.<T>builder().code("500").msg(msg).build();
+    }
+
+    public static <T> ResultBuild<T> builder() {
+        return new ResultBuild<>();
     }
 }

@@ -1,8 +1,6 @@
 package com.mycompany.app.security.config;
 
 import com.mycompany.app.exception.AppException;
-import com.mycompany.app.exception.ExpMsg;
-import com.mycompany.app.security.service.JwtManageService;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
@@ -15,6 +13,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.*;
+
+/**
+ * @Author: 罗丹枫
+ * @Description: token的签名和校验
+ * @CreatedAt: 2024/7/11 22:20
+ */
 
 @Configuration
 @Slf4j
@@ -30,7 +34,7 @@ public class JwtComponentConfig {
             RSAKey privateKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("rsa/rsa_private_key.pem"));
             return new RSASSASigner(privateKey);
         } catch (JOSEException e) {
-            throw new AppException(ExpMsg.JWK_PARSE_FAILURE.getExpMsg(),e);
+            throw new AppException("Wrong format for private key file", e);
         }
     }
 
@@ -40,22 +44,17 @@ public class JwtComponentConfig {
             RSAKey publicKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("rsa/rsa_public_key.pem"));
             return new RSASSAVerifier(publicKey);
         } catch (JOSEException e) {
-            throw new AppException(ExpMsg.JWK_PARSE_FAILURE.getExpMsg(),e);
+            throw new AppException("Wrong format for public key file", e);
         }
-    }
-
-    @Bean
-    public JwtManageService jwtLoginService() {
-        return new JwtManageService(jwsSigner(), jwsVerifier());
     }
 
 
     private String readKeyAsString(String signatureFile) {
-        String pemString = null;
+        String pemString;
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(signatureFile)) {
             pemString = new String(is.readAllBytes());
         } catch (IOException e) {
-            throw new AppException("读取密钥文件IO异常", e);
+            throw new AppException("An IO exception occurred while Reading key file", e);
         }
         return pemString;
     }

@@ -1,16 +1,32 @@
 package com.mycompany.app.security.config;
 
+/**
+ * @Author: 罗丹枫
+ * @Description: 请求路径权限设置
+ * @CreatedAt: 2024/7/11 22:19
+ */
+
 public enum AuthorizationUrl {
 
     ANONYMOUS(null, new String[]{
-            "/permitAll","/login","/logout","/cache/**"
+            "/hi/**",
+            "/permitAll",
+            "/login",
+            "/logout",
+            "/cache/**",
+            "/trim/**",
+            "/conf/**",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/swagger-resources/**",
+            "/v2/**"
     }),
 
-    NORMAL("NORMAL", new String[]{
+    NORMAL("normal", new String[]{
             "/withRole/normal"
     }),
 
-    ADMIN("ADMIN", new String[]{
+    ADMIN("admin", new String[]{
             "/withRole/admin",
             "/admin/**"
     });

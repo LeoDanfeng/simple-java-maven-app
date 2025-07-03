@@ -1,9 +1,9 @@
 package com.mycompany.app.dao.mysql;
 
-import com.mycompany.app.entity.SysUser;
+import com.mycompany.app.entity.mysql.SysUser;
 import org.springframework.data.repository.CrudRepository;
 
 public interface MysqlUserRepository extends CrudRepository<SysUser,Long> {
 
-    SysUser getByAccountName(String accountName);
+    SysUser getByAccount(String accountName);
 }

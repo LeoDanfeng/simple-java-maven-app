@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_SERVER}
+        file-extension: yml
+        username: nacos
+        password: nacos
+        namespace: public
+        group: DEFAULT_GROUP
+        extension-configs:
+          - data-id: extension.yml
+            group: DEFAULT_GROUP
+            refresh: true
+        shared-configs:
+          - data-id: share.yml
+            group: DEFAULT_GROUP
+            refresh: true
+  application:
+    name: simple-java-maven-app
+
