@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: simple-java-maven-app
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:192.168.0.119}
+      port: ${CONSUL_PORT:8500}
+      config:
+        format: YAML
+        enabled: true
+        defaultContext: application
+        profileSeparator: ','
+        prefixes: config
+        data-key: data
+
+
+# 配置中心的配置都必须放在bootstrap.yml中，否则不生效
+# 默认会从 prefixes/defaultContext(service-name[,profile])/data-key 加载内容
+# 上面配置会加载键名为 config/application/data 或者 config/simple-java-maven-app/data 的value，用YAML格式解析value

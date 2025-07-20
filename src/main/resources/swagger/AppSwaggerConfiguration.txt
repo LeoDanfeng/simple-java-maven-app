@@ -13,18 +13,16 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-/**
- * @Author: 罗丹枫
- * @Description: Swagger配置类
- * @DateTime: 2024/7/11 22:29
- */
-
 @Configuration
 @EnableSwagger2
 public class AppSwaggerConfiguration {
 
+    @Value("${spring.application.name:simple-java-maven-app}")
+    private String appName;
+
     @Value("${server.port:8080}")
     private int port;
+
 
     @Bean
     public Docket docket() {
@@ -38,11 +36,11 @@ public class AppSwaggerConfiguration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("App 接口文档")
-                .description("App 接口文档")
+                .title(appName)
+                .description("Api Document")
                 .termsOfServiceUrl("http://127.0.0.1:" + port + "/swagger")
                 .version("1.0")
-                .contact(new Contact("罗丹枫", "https://freshman.com", "13076894376@163.com"))
+                .contact(new Contact("Luo Danfeng", "https://www.laria.cn", "13076894376@163.com"))
                 .build();
     }
 }

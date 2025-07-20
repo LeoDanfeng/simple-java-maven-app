@@ -13,11 +13,7 @@ import java.io.Serializable;
 @Table(name = "sys_user")
 public class SysUser extends BaseEntity implements Serializable {
 
-    private static final long serialVersionUID = 2024001L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final static long serialVersionUID = 2025123456789L;
 
     private String account;
 

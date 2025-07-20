@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 100
+      idle-timeout: 60000
+      minimum-idle: 60000
+      connection-timeout: 30000

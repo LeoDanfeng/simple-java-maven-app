@@ -4,11 +4,15 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "t_sharding")
-public class Sharding {
+@Table(name = "big_table")
+public class BigTable implements Serializable {
+
+    private final static long serialVersionUID = 2025123456789L;
+
     @Id
     @GeneratedValue(generator = "snowflake-id-generator")
     @GenericGenerator(

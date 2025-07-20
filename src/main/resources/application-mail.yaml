@@ -3,12 +3,12 @@ spring:
     host: smtp.163.com
     port: 465
     protocol: smtps
-    username: "m13076894376@163.com"
-    password: "BDTBQaFLfjjSgifB"
+    username: "13076894376@163.com"
+    password: "NYxUx37Z5pkjeWtV"
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            enalbled: true
+            enabled: true
             required: true

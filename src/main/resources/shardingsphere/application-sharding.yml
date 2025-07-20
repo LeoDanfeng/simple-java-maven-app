@@ -1,22 +1,24 @@
 spring:
   datasource:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-    url: jdbc:shardingsphere:classpath:shading-auto-tables-algorithm.yaml
+#    url: jdbc:shardingsphere:classpath:shading-auto-tables-algorithm.yaml
   shardingsphere:
     datasource:
       names: ds0,ds1
       ds0:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://${MASTER_MYSQL}/${SHARDING_MYSQL_DB}?serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
-        username: admin
-        password: admin
+        jdbc-url: jdbc:mysql://${MYSQL_MASTER}/${MYSQL_DB}?serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+        username: ${MYSQL_USER}
+        password: ${MYSQL_PASSWORD}
       ds1:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://${SLAVE_MYSQL}/${SHARDING_MYSQL_DB}?serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
-        username: admin
-        password: admin
+        jdbc-url: jdbc:mysql://${MYSQL_SLAVE}/${MYSQL_DB}?serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+        username: ${MYSQL_USER}
+        password: ${MYSQL_PASSWORD}
+        data-source-properties:
+          readOnly: true
     rules:
       readwrite-splitting:
         data-sources:
@@ -25,30 +27,30 @@ spring:
               write-data-source-name: ds0
               read-data-source-names:
                 - ds1
-            load-balancer-name: alg-round
+            load-balancer-name: random
         load-balancers:
-          alg-round:
-            type: ROUND_ROBIN
+          random:
+            type: RANDOM
       sharding:
-        default-database-strategy:
-          none:
-        default-table-strategy:
-          none:
+#        default-database-strategy:
+#          none:
+#        default-table-strategy:
+#          none:
         tables:
           t_sharding:
-            actual-data-nodes: ds0.t_sharding$->{0..1}
+            actual-data-nodes: ds0.sharding$->{0..1}
             table-strategy:
                 standard:
                     sharding-column: id
-                    sharding-algorithm-name: t_sharding_algorithm
+                    sharding-algorithm-name: inline
             key-generate-strategy:
               column: id
               key-generator-name: snowflake
         sharding-algorithms:
-          t_sharding_algorithm:
+          inline:
             type: INLINE
             props:
-              algorithm-expression: t_sharding$->{id % 2}
+              algorithm-expression: sharding$->{id % 2}
         key-generators:
           snowflake:
             type: SNOWFLAKE

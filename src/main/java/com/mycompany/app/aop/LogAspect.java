@@ -22,20 +22,15 @@ public class LogAspect {
     @Resource
     private RequestStatisticRepository requestStatisticRepository;
 
-    @Pointcut("execution(* *..*Controller.*(..))")
-    public void beforeRequest() {
+    @Pointcut("execution(public * *..*Controller.*(..))")
+    public void publicMethodWithinController() {
 
     }
 
-    /**
-     * @Author: 罗丹枫
-     * @Description: 统计接口的调用信息
-     * @CreatedAt: 2024/7/11 21:49
-     * @Params: [joinPoint]  AOP切点
-     * @Return: void
-     */
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    public void handlerMethod() {}
 
-    @Before("beforeRequest()")
+    @Before("handlerMethod()")
     public void requestStatistics(JoinPoint joinPoint) {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 //        if ("anonymousUser".equals(currentUser)) {
@@ -67,8 +62,11 @@ public class LogAspect {
         Object[] args = joinPoint.getArgs();
         StringBuilder builder = new StringBuilder();
         for (Object o : args) {
-            builder.append(o.toString());
-            builder.append(";");
+            builder.append(o);
+            builder.append(",");
+        }
+        if (builder.length() > 0) {
+            builder.deleteCharAt(builder.length() - 1);
         }
         rs.setArgs(builder.toString());
         requestStatisticRepository.save(rs);

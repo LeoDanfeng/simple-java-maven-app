@@ -31,7 +31,7 @@ public class JwtComponentConfig {
     @Bean
     public JWSSigner jwsSigner() {
         try {
-            RSAKey privateKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("rsa/rsa_private_key.pem"));
+            RSAKey privateKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("keypair/rsa_private_key.pem"));
             return new RSASSASigner(privateKey);
         } catch (JOSEException e) {
             throw new AppException("Wrong format for private key file", e);
@@ -41,7 +41,7 @@ public class JwtComponentConfig {
     @Bean
     public JWSVerifier jwsVerifier() {
         try {
-            RSAKey publicKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("rsa/rsa_public_key.pem"));
+            RSAKey publicKey = (RSAKey) JWK.parseFromPEMEncodedObjects(readKeyAsString("keypair/rsa_public_key.pem"));
             return new RSASSAVerifier(publicKey);
         } catch (JOSEException e) {
             throw new AppException("Wrong format for public key file", e);

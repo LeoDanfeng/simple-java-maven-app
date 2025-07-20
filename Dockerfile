@@ -1,9 +1,28 @@
-FROM maven:3.6
+FROM openjdk:17
 USER root
 LABEL maintainer="13076894376@163.com"
+COPY ./target/*.jar /my-app/app.jar
+COPY ./.env /my-app/.env
+COPY ./README.md /my-app/README.md
 WORKDIR /my-app
-COPY . /my-app/
+ENV MYSQL_HOST="192.168.0.119"
+ENV MYSQL_PORT="3309"
+ENV MYSQL_DB="simple-java-maven-app"
+ENV MYSQL_USER="root"
+ENV MYSQL_PASSWORD="root@mc"
+ENV REDIS_HOST="192.168.0.119"
+ENV REDIS_PORT="6379"
+ENV REDIS_PASSWORD="redispass"
+ENV REDIS_DB="0"
+ENV NACOS_SERVER="192.168.0.119:8848"
+ENV CONSUL_HOST="192.168.0.119"
+ENV CONSUL_PORT="8500"
+ENV XXL_ADMIN_ADDRESS="http://192.168.0.119:8086/xxl-job-admin/"
+ENV JAVA_OPTS=""
+ENV ARGS=""
+VOLUME /my-app
 EXPOSE 8080
-VOLUME /my-app/
-CMD java -jar target/my-app-1.0.0-SNAPSHOT.jar
+CMD sh -c "java $JAVA_OPTS -jar app.jar $ARGS"
+
+
 

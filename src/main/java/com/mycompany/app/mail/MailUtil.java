@@ -11,11 +11,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
 
-/**
- * @author: 罗丹枫
- * @description: TODO
- * @dateTime: 2024/10/19 10:32
- */
 @Component
 public class MailUtil {
 

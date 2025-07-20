@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: simple-java-maven-app
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:192.168.0.119}
+      port: ${CONSUL_PORT:8500}
+      discovery:
+        enabled: true
+        register: true
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        # prefer-ip-address: true
+        # ipAddress: ${HOST_IP:192.168.0.102}

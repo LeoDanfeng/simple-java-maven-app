@@ -12,23 +12,16 @@ import java.time.LocalDateTime;
 @RedisHash("requestStatistic")
 @Data
 public class RequestStatistic {
-
     @Id
     private String id;
-
-    private String accessIp;
-
-    private String remoteAddr;
-
     @Indexed
+    private String accessUser;
+    @Indexed
+    private String accessUri;
     @DateTimeFormat
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",  timezone = "GMT+8")
     private LocalDateTime accessTime;
-
-    @Indexed
-    private String accessUser;
-
-    private String accessUri;
-
+    private String accessIp;
+    private String remoteAddr;
     private String args;
 }

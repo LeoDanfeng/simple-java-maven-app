@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: simple-java-maven-app
+  config:
+    import:
+      - classpath:application-mvc.yaml
+      - classpath:application-mail.yaml
+      - classpath:application-jpa.yaml
+      - classpath:application-redis.yaml
+      - classpath:application-xxljob.yaml
+      - classpath:application-consul.yaml
+      - classpath:application-mysql.yaml
+      - classpath:application-actuator.yaml
+app:
+  security:
+    disable: true
+  jwt:
+    prefix: "Bearer "
+    ttl: 30 # minutes
+    refreshTtl: 30 # minutes
+snowflake:
+  machineBit: 6
+  sequenceBit: 16
+  machineId: 1

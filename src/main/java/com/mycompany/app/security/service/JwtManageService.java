@@ -42,7 +42,7 @@ public class JwtManageService {
     private String jwtPrefix;
     @Value("${app.jwt.ttl:30}")
     private Long jwtTtl;
-    @Value("${app.jwt.refreshTtl:30}")
+    @Value("${app.jwt.refreshTtl:60}")
     private Long refreshTtl;
 
     /**
@@ -68,7 +68,7 @@ public class JwtManageService {
     }
 
     public JWTClaimsSet jwtClaimsSet(Authentication auth) {
-        final List<String> authoritiesList = auth.getAuthorities().stream().map(t -> t.getAuthority()).collect(Collectors.toList());
+        final List<String> authoritiesList = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         final Date issueTime = new Date();
         // issuer(iss) subject(sub) audience(aud) issueTime(iat) expirationTime(exp) notBeforeTime(nbt), jwtId(jti)
         return new JWTClaimsSet.Builder()
@@ -85,17 +85,18 @@ public class JwtManageService {
         UsernamePasswordAuthenticationToken authentication = null;
         final JWTClaimsSet jwtClaimsSet = getJWTClaimsSet(token);
         final String redisKey = jwtClaimsSet.getJWTID();
-        if (stringRedisTemplate.hasKey(redisKey)) {
-            List<GrantedAuthority> authoritiesList = ((List<String>) jwtClaimsSet.getClaim(JwtComponentConfig.AUTHORITIES_CLAIM))
-                    .stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
-            authentication = new UsernamePasswordAuthenticationToken(jwtClaimsSet.getSubject(),
-                    null,
-                    authoritiesList
-            );
-            stringRedisTemplate.expire(redisKey, jwtTtl, TimeUnit.MINUTES);
+        if (!stringRedisTemplate.hasKey(redisKey)) {
+            throw new AppException("Login has been expired.");
         }
+        List<GrantedAuthority> authoritiesList = ((List<String>) jwtClaimsSet.getClaim(JwtComponentConfig.AUTHORITIES_CLAIM))
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+        authentication = new UsernamePasswordAuthenticationToken(jwtClaimsSet.getSubject(),
+                null,
+                authoritiesList
+        );
+        stringRedisTemplate.expire(redisKey, jwtTtl, TimeUnit.MINUTES);
         return authentication;
     }
 

@@ -15,8 +15,10 @@ buildNumber.properties
 .idea
 .github
 *.iml
+*.log
+log
 logs
 xxl-job-logs
-log
+
 
 
